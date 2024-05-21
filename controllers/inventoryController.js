@@ -1,4 +1,5 @@
 const inventoryModel=require("../models/inventoryModel");
+//import { populate } from './../node_modules/dotenv/lib/main.d';
 const userModel=require("../models/user.model");
 //CREATE INVENTORY
 
@@ -39,4 +40,25 @@ const createInventoryController=async (req,res)=>{
     }
 }
 
-module.exports={createInventoryController}
+//GET all blood records
+const getInventoryController=async(req,res)=>{
+    try {
+        const inventory= await inventoryModel.find({organisation:req.body.userId}).populate("donor")
+        .populate("hospital").sort({createdAt:-1});
+        return res.status(200).send({
+            success:true,
+            message:"got all records successfully",
+            inventory
+        })
+        
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({
+            success: false,
+            message:"Error in getting the records"
+        })
+        
+    }
+}
+
+module.exports={createInventoryController,getInventoryController}
