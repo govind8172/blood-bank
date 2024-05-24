@@ -105,6 +105,8 @@
 // export default Form
 import React, { useState } from 'react';
 import InputType from './InputType';
+import {Link} from 'react-router-dom';
+import { handleLogin, handleRegister } from '../../../services/authService';
 
 const Form = ({ formType,submitBtn, formTitle }) => {
   const [email, setEmail] = useState('');
@@ -135,7 +137,10 @@ const Form = ({ formType,submitBtn, formTitle }) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={(e)=>{
+        if(formType==='login') return handleLogin(e,email,password,role)
+            else if(formType==='register') return handleRegister(e,name,role,email,password,phone,hospital,organization,address,website);
+      }}>
         <h1 className="text-center">{formTitle}</h1>
         <hr />
         
@@ -321,7 +326,16 @@ const Form = ({ formType,submitBtn, formTitle }) => {
             }
          })()}
         
-        <div className="d-flex">
+        <div className="d-flex d-flex-row justify-content-between">
+            {formType==='login'?(
+                <p>Not registered yet ? Register now!
+                    <Link to='/register'> Here</Link>
+                </p>
+            ):(
+                <p>Already a User
+                    <Link to='/login'> Login</Link>
+                </p>
+            )}
           <button type="submit" className="btn btn-primary">
             {submitBtn}
           </button>
