@@ -1,26 +1,78 @@
+const {  mongoose } = require("mongoose");
 const inventoryModel=require("../models/inventoryModel");
 //import { populate } from './../node_modules/dotenv/lib/main.d';
 const userModel=require("../models/user.model");
+
+
+
 //CREATE INVENTORY
 
 const createInventoryController=async (req,res)=>{
     try {
-        const {email,inventoryType}=req.body
+        const {email}=req.body
         //Validation
         const user= await userModel.findOne({email})
        if(!user)
         {
             throw new Error("User not found")
         }
-        if(inventoryType==='in'&& user.role!=='donor'){
-            throw new Error("Not a donor account")
+        // if(inventoryType==='in'&& user.role!=='donor'){
+        //     throw new Error("Not a donor account")
 
 
+        //}
+        // if(inventoryType==='out'&& user.role!=='hospita'){
+        //     throw new Error("Not a hospital")
+        // }
+          if(req.body.inventoryType=='out'){
+            const requestedBloodGroup=req.body.bloodGroup
+            const requestedQuantityOfBlood=req.body.quantity
+            const organisation=new mongoose.Types.ObjectId(req.body.userId)
+            //calculation in
+            const totalInOfRequestedBloodGroup= await inventoryModel.aggregate([
+                {$match:{
+                    organisation,
+                    inventoryType:'in',
+                    bloodGroup:requestedBloodGroup
+                }},
+                {$group:{
+                    _id:'bloodGroup',
+                    total: {$sum: '$quantity'}
+                }}
+            ])
+           // console.log("totla in",totalInOfRequestedBlood);
+             //out
+             const totalIn=totalInOfRequestedBloodGroup[0]?.total||0;
+
+             const totalOutOfRequestedBloodGroup=await inventoryModel.aggregate([
+                {$match:{
+                    organisation,
+                    inventoryType:'out',
+                    bloodGroup:requestedBloodGroup
+                }},
+                {
+                    $group:{
+                        _id:'$bloodGroup',
+                        total:{$sum:'$quantity'}
+                    }
+                }
+             ]);
+             const totalOut=totalOutOfRequestedBloodGroup[0]?.total||0;
+
+             const availableQuantityOfBloodGroup=totalIn-totalOut
+             //quantity validation
+             if(availableQuantityOfBloodGroup<requestedQuantityOfBlood){
+                return res.status(500).send({
+               success:false,
+               message:`Only ${availableQuantityOfBloodGroup}ml of ${requestedBloodGroup} is available`
+            })
         }
-        if(inventoryType==='out'&& user.role!=='hospita'){
-            throw new Error("Not a hospital")
-        }
+            req.body.hospital=user?._id;
 
+          
+        }else{
+            req.body.donor=user?._id;
+        }
         //save record
         const inventory=new inventoryModel(req.body);
         await inventory.save();
@@ -60,5 +112,34 @@ const getInventoryController=async(req,res)=>{
         
     }
 }
+//GET donor records
+const getDonorsController=async(req,res)=>{
+    try {
+       const organisation=req.body.userId
+       //find donors
+       const donorId= await inventoryModel.distinct("donor",{
+        organisation,
+       });
+       //console.log(donorId);
+       const donors=await userModel.find({_id:{$in:donorId}})
 
-module.exports={createInventoryController,getInventoryController}
+
+       return res.status(200).send({
+        success:true,
+        message:'Donors fetched successfully',
+        donors
+       })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({
+            success:false,
+            message:'Error in donor records',
+            error
+        })
+        
+    }
+
+}
+
+module.exports={createInventoryController,getInventoryController,getDonorsController}
