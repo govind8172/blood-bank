@@ -34,9 +34,9 @@ export const userLogin=createAsyncThunk(
 
 export const userRegister=createAsyncThunk(
     'auth/register',
-    async({name,role,email,password,phone,hospital,organization,address,website},{rejectWithValue})=>{
+    async({name,role,email,password,phone,hospitalName,organisationName,address,website},{rejectWithValue})=>{
         try {
-            const {data}= await API.post('/auth/register',{name,role,email,password,phone,hospital,organization,address,website})
+            const {data}= await API.post('/auth/register',{name,role,email,password,phone,hospitalName,organisationName,address,website})
             //store
             if(data.success)
                 {

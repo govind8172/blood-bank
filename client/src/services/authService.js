@@ -15,11 +15,11 @@ export const handleLogin=(e,email,password,role)=>{
         
     }
 };
-export const handleRegister=(e,name,role,email,password,phone,hospital,organization,address,website)=>{
+export const handleRegister=(e,name,role,email,password,phone,hospitalName,organisationName,address,website)=>{
     e.preventDefault()
     try {
         //console.log('Register ',name,role,email,password,phone,hospital,organization,address,website)
-        store.dispatch(userRegister({name,role,email,password,phone,hospital,organization,address,website}))
+        store.dispatch(userRegister({name,role,email,password,phone,hospitalName,organisationName,address,website}))
         
     } catch (error) {
         console.log(error);

@@ -142,4 +142,53 @@ const getDonorsController=async(req,res)=>{
 
 }
 
-module.exports={createInventoryController,getInventoryController,getDonorsController}
+const getOrganisationController=async (req,res)=>{
+    try {
+        const donor=req.body.userId
+        const orgId=await inventoryModel.distinct("orgainsation",{
+            donor
+        })
+
+        //find org
+        const organisations=await userModel.find({_id:{$in:orgId}})
+        res.status(200).send({
+            success:true,
+            message:'Organisations fetched successfully',
+            organisations
+        })
+        
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({
+            success:false,
+            message:'Error in fetching organisations',
+            error
+        })
+    }
+
+}
+const getHospitalController=  async(req,res)=>{
+    try {
+        const organisation=req.body.userId
+        const hospitalId=await inventoryModel.distinct("hospital",{organisation})
+
+        //find hospital
+        const hospitals=await userModel.find({_id:{$in:hospitalId}})
+        res.status(200).send({
+            success:true,
+            message:'Hospitals fetched successfully',
+            hospitals
+        })
+        
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({
+            success:false,
+            message:"Error in fetching hospitals.",
+            error
+        })
+    }
+
+}
+
+module.exports={createInventoryController,getInventoryController,getDonorsController,getOrganisationController,getHospitalController}
