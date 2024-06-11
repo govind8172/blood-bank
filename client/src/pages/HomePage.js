@@ -1,5 +1,6 @@
 import React,{useState,useEffect} from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import Spinner from '../components/Shared/Spinner';
 import Layout from '../components/Shared/Layout/Layout';
 import Modal from '../components/Shared/model/Modal';
@@ -7,7 +8,8 @@ import API from '../services/api';
 import moment from 'moment';
 
 const HomePage = () => {
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading, error ,user} = useSelector((state) => state.auth);
+  const navigate=useNavigate()
 
   const [data,setData]=useState([])
 
@@ -32,6 +34,13 @@ const HomePage = () => {
 
   return (
     <Layout>
+
+
+      {user?.role==='admin' && navigate('/admin')
+
+
+
+      }
       {error && (
         <div>
           <span>{error}</span>

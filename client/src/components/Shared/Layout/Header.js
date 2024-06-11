@@ -2,13 +2,14 @@ import React from 'react';
 import { BiSolidDonateHeart } from "react-icons/bi";
 import { FaCircleUser } from "react-icons/fa6";
 import { useSelector } from 'react-redux';
-import {  useNavigate } from 'react-router-dom';
+import {  useNavigate,useLocation,Link } from 'react-router-dom';
 
 
 
 const Header = () => {
     const {user}=useSelector(state=> state.auth);
     const navigate=useNavigate();
+    const location=useLocation();
 
     //logout
     const handleLogout=()=>{
@@ -31,6 +32,21 @@ const Header = () => {
                     </p>
 
                 </li>
+                {
+                  location.pathname==='/'||location.pathname==='/donor'||location.pathname==='/hospital'?(
+                    <li className='nav-item mx-3'>
+                      <Link to="/analytics" className='nav-link'>
+                      Analytics
+                      </Link>
+                    </li>
+
+
+                  ):(<li className='nav-item mx-3'>
+                    <Link to="/" className='nav-link'>
+                    Home
+                    </Link>
+                  </li>)
+                }
                 <li className="nav-item mx-3">
                     <button className='btn btn-danger' onClick={handleLogout}>Logout</button>
 

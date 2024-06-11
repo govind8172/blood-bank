@@ -1,7 +1,7 @@
 const {  mongoose } = require("mongoose");
 const inventoryModel=require("../models/inventoryModel");
 //import { populate } from './../node_modules/dotenv/lib/main.d';
-const userModel=require("../models/user.model");
+const userModel=require("../models/userModel");
 
 
 
@@ -107,11 +107,40 @@ const getInventoryController=async(req,res)=>{
         console.log(error)
         return res.status(500).send({
             success: false,
-            message:"Error in getting the records"
+            message:"Error in getting the records",
+            error
         })
         
     }
 }
+//get blood records of 3
+
+const getRecentInventoryController = async (req, res) => {
+    try {
+      const inventory = await inventoryModel
+        .find({
+          organisation: req.body.userId,
+        })
+        .limit(3)
+        .sort({ createdAt: -1 });
+      return res.status(200).send({
+        success: true,
+        message: "recent Inventory Data",
+        inventory,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({
+        success: false,
+        message: "Error In Recent Inventory API",
+        error,
+      });
+    }
+  };
+
+
+
+
 //GET donor records
 const getDonorsController=async(req,res)=>{
     try {
@@ -190,5 +219,31 @@ const getHospitalController=  async(req,res)=>{
     }
 
 }
+//get hospital blood records
+const getInventoryHospitalController=async(req,res)=>{
+    try {
+        const inventory= await inventoryModel.find(req.body.filters).populate("donor")
+        .populate("hospital").populate("organisation").sort({createdAt:-1});
+        return res.status(200).send({
+            success:true,
+            message:"got all hospital consumer records successfully",
+            inventory
+        })
+        
+    } catch (error) {
+        console.log(error)
+        return res.status(500).send({
+            success: false,
+            message:"Error in getting consumer records"
+        })
+        
+    }
+}
 
-module.exports={createInventoryController,getInventoryController,getDonorsController,getOrganisationController,getHospitalController}
+module.exports={createInventoryController,
+    getInventoryController,
+    getDonorsController,
+    getOrganisationController,
+    getHospitalController,
+    getInventoryHospitalController,
+    getRecentInventoryController}
