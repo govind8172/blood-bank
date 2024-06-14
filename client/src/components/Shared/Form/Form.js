@@ -2,6 +2,7 @@ import React, { useState } from 'react';
  import InputType from './InputType';
 import {Link} from 'react-router-dom';
 import { handleLogin, handleRegister } from '../../../services/authService';
+import './form.css';
 
 const Form = ({ formType, submitBtn, formTitle }) => {
   const [email, setEmail] = useState("");
@@ -47,8 +48,8 @@ const Form = ({ formType, submitBtn, formTitle }) => {
               onChange={(e) => setRole(e.target.value)}
               defaultChecked
             />
-            <label htmlFor="adminRadio" className="form-check-label">
-              donor
+            <label htmlFor="donorRadio" className="form-check-label">
+              Donor
             </label>
           </div>
           <div className="form-check ms-2">
@@ -99,7 +100,7 @@ const Form = ({ formType, submitBtn, formTitle }) => {
               return (
                 <>
                   <InputType
-                    labelText={"email"}
+                    labelText={"Email"}
                     labelFor={"forEmail"}
                     inputType={"email"}
                     name={"email"}
@@ -152,7 +153,7 @@ const Form = ({ formType, submitBtn, formTitle }) => {
                   )}
 
                   <InputType
-                    labelText={"email"}
+                    labelText={"Email"}
                     labelFor={"forEmail"}
                     inputType={"email"}
                     name={"email"}
@@ -168,7 +169,7 @@ const Form = ({ formType, submitBtn, formTitle }) => {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                   <InputType
-                    labelText={"website"}
+                    labelText={"Website"}
                     labelFor={"forWebsite"}
                     inputType={"text"}
                     name={"website"}
@@ -201,15 +202,28 @@ const Form = ({ formType, submitBtn, formTitle }) => {
           {formType === "login" ? (
             <p>
               Not registerd yet ? Register
-              <Link to="/register"> Here !</Link>
+              <Link to="/register" style={{color: "black"}}>   Here !</Link>
             </p>
           ) : (
             <p>
-              ALready User Please
-              <Link to="/login"> Login !</Link>
+              Already user please
+              <Link to="/login" style={{color: "black"}}> Login !</Link>
             </p>
           )}
-          <button className="btn btn-primary" type="submit">
+          <button
+            className="btn btn-primary"
+            type="submit"
+            style={{
+              padding: "0.5rem 1rem",
+              border: "none",
+              borderRadius: "4px",
+              backgroundColor: "black",
+              color: "white",
+              fontSize: "16px",
+              cursor: "pointer",
+              transition: "background-color 0.3s ease",
+            }}
+          >
             {submitBtn}
           </button>
         </div>

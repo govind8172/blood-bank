@@ -58,7 +58,7 @@ const HomePage = () => {
           Add Inventory
           </h4>
         <table className="table">
-          <thead>
+          <thead >
             <tr>
               <th scope="col">Blood Group</th>
               <th scope="col">Inventory Type</th>
